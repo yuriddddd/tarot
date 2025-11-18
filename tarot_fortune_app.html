@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>가을 타로 운세</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #8B4513 0%, #D2691E 50%, #CD853F 100%);
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        .leaf {
+            position: fixed;
+            font-size: 30px;
+            opacity: 0.8;
+            animation: fall linear infinite;
+            z-index: 1;
+        }
+
+        @keyframes fall {
+            0% {
+                transform: translateY(-10vh) rotate(0deg);
+                opacity: 0.8;
+            }
+            100% {
+                transform: translateY(110vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .container {
+            position: relative;
+            z-index: 10;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        h1 {
+            color: #FFF8DC;
+            font-size: 3em;
+            margin-bottom: 10px;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.3);
+        }
+
+        .subtitle {
+            color: #FFE4B5;
+            font-size: 1.2em;
+            margin-bottom: 40px;
+        }
+
+        .card-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin: 40px 0;
+        }
+
+        .tarot-card {
+            width: 150px;
+            height: 250px;
+            background: linear-gradient(145deg, #8B4513, #A0522D);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .tarot-card:hover {
+            transform: translateY(-10px) scale(1.05);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.4);
+        }
+
+        .tarot-card.flipped {
+            background: linear-gradient(145deg, #FFF8DC, #FFE4B5);
+            animation: flip 0.6s ease;
+        }
+
+        @keyframes flip {
+            0% { transform: rotateY(0deg); }
+            50% { transform: rotateY(90deg); }
+            100% { transform: rotateY(0deg); }
+        }
+
+        .card-back {
+            color: #FFE4B5;
+            font-size: 4em;
+        }
+
+        .card-front {
+            display: none;
+            font-size: 3em;
+            padding: 20px;
+        }
+
+        .tarot-card.flipped .card-back {
+            display: none;
+        }
+
+        .tarot-card.flipped .card-front {
+            display: block;
+        }
+
+        .result-box {
+            background: rgba(255, 248, 220, 0.9);
+            border-radius: 15px;
+            padding: 30px;
+            margin-top: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            display: none;
+        }
+
+        .result-box.show {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .result-title {
+            color: #8B4513;
+            font-size: 2em;
+            margin-bottom: 20px;
+        }
+
+        .result-content {
+            color: #654321;
+            font-size: 1.2em;
+            line-height: 1.8;
+            text-align: left;
+        }
+
+        .reset-btn {
+            background: linear-gradient(145deg, #8B4513, #A0522D);
+            color: #FFF8DC;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.2em;
+            border-radius: 30px;
+            cursor: pointer;
+            margin-top: 30px;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .reset-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 7px 20px rgba(0,0,0,0.4);
+        }
+
+        .instruction {
+            color: #FFE4B5;
+            font-size: 1.3em;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🍂 가을 타로 운세 🍂</h1>
+        <p class="subtitle">낙엽처럼 떨어지는 카드 중 하나를 선택하세요</p>
+        
+        <p class="instruction" id="instruction">세 장의 카드 중 하나를 선택해주세요</p>
+        
+        <div class="card-container" id="cardContainer">
+            <div class="tarot-card" onclick="selectCard(0)">
+                <div class="card-back">🃏</div>
+                <div class="card-front"></div>
+            </div>
+            <div class="tarot-card" onclick="selectCard(1)">
+                <div class="card-back">🃏</div>
+                <div class="card-front"></div>
+            </div>
+            <div class="tarot-card" onclick="selectCard(2)">
+                <div class="card-back">🃏</div>
+                <div class="card-front"></div>
+            </div>
+        </div>
+
+        <div class="result-box" id="resultBox">
+            <h2 class="result-title" id="resultTitle"></h2>
+            <div class="result-content" id="resultContent"></div>
+            <button class="reset-btn" onclick="resetCards()">다시 보기</button>
+        </div>
+    </div>
+
+    <script>
+        const tarotCards = [
+            { emoji: '⭐', name: '별', fortune: '희망과 영감이 가득한 하루입니다. 오늘은 새로운 아이디어가 떠오르고, 긍정적인 에너지가 넘칠 것입니다. 꿈꿔왔던 일에 도전해보세요.' },
+            { emoji: '☀️', name: '태양', fortune: '밝고 활기찬 하루가 될 것입니다. 주변 사람들과의 관계가 좋아지고, 성공의 기운이 함께합니다. 자신감을 가지고 행동하세요.' },
+            { emoji: '🌙', name: '달', fortune: '직관력이 높아지는 날입니다. 내면의 목소리에 귀 기울이고, 감정을 잘 살펴보세요. 숨겨진 진실이 드러날 수 있습니다.' },
+            { emoji: '💖', name: '연인', fortune: '사랑과 조화의 운세입니다. 소중한 사람들과의 관계가 깊어지고, 새로운 인연을 만날 수도 있습니다. 마음을 열어보세요.' },
+            { emoji: '⚡', name: '탑', fortune: '예상치 못한 변화가 찾아올 수 있습니다. 하지만 이는 새로운 시작을 위한 과정입니다. 유연하게 대처하면 좋은 결과를 얻을 것입니다.' },
+            { emoji: '🎯', name: '운명의 수레바퀴', fortune: '운명의 전환점이 될 수 있는 날입니다. 새로운 기회가 찾아오니 주의 깊게 살펴보세요. 긍정적인 변화가 기다리고 있습니다.' },
+            { emoji: '⚖️', name: '정의', fortune: '공정함과 균형이 중요한 하루입니다. 올바른 판단을 내리고, 원칙을 지키세요. 정직함이 좋은 결과를 가져올 것입니다.' },
+            { emoji: '🦁', name: '힘', fortune: '내면의 용기와 힘이 발휘되는 날입니다. 어려운 상황도 침착하게 극복할 수 있습니다. 자신을 믿고 당당하게 나아가세요.' },
+            { emoji: '🎭', name: '마법사', fortune: '창조력과 실행력이 뛰어난 날입니다. 하고 싶었던 일을 시작하기 좋은 시기입니다. 당신의 능력을 믿고 도전하세요.' }
+        ];
+
+        let selectedCards = [];
+        let hasSelected = false;
+
+        function initCards() {
+            selectedCards = [];
+            for (let i = 0; i < 3; i++) {
+                const randomIndex = Math.floor(Math.random() * tarotCards.length);
+                selectedCards.push(tarotCards[randomIndex]);
+            }
+        }
+
+        function selectCard(index) {
+            if (hasSelected) return;
+            
+            hasSelected = true;
+            const cards = document.querySelectorAll('.tarot-card');
+            const selectedCard = cards[index];
+            
+            selectedCard.classList.add('flipped');
+            selectedCard.querySelector('.card-front').textContent = selectedCards[index].emoji;
+            
+            document.getElementById('instruction').style.display = 'none';
+            
+            setTimeout(() => {
+                document.getElementById('resultTitle').textContent = `${selectedCards[index].emoji} ${selectedCards[index].name}`;
+                document.getElementById('resultContent').textContent = selectedCards[index].fortune;
+                document.getElementById('resultBox').classList.add('show');
+            }, 600);
+        }
+
+        function resetCards() {
+            hasSelected = false;
+            const cards = document.querySelectorAll('.tarot-card');
+            cards.forEach(card => {
+                card.classList.remove('flipped');
+            });
+            
+            document.getElementById('resultBox').classList.remove('show');
+            document.getElementById('instruction').style.display = 'block';
+            
+            initCards();
+        }
+
+        function createLeaf() {
+            const leaf = document.createElement('div');
+            leaf.className = 'leaf';
+            const leaves = ['🍂', '🍁', '🍃'];
+            leaf.textContent = leaves[Math.floor(Math.random() * leaves.length)];
+            leaf.style.left = Math.random() * 100 + '%';
+            leaf.style.animationDuration = (Math.random() * 5 + 5) + 's';
+            leaf.style.animationDelay = Math.random() * 5 + 's';
+            document.body.appendChild(leaf);
+
+            setTimeout(() => {
+                leaf.remove();
+            }, 15000);
+        }
+
+        setInterval(createLeaf, 300);
+
+        initCards();
+    </script>
+</body>
+</html>
